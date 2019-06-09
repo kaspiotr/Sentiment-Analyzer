@@ -9,7 +9,6 @@ def read_csv():
         read_csv = csv.reader(csv_file, delimiter=',')
         headers = []
         headers_read = False
-
         line_no = 0
         for row in read_csv:
             print(row)
