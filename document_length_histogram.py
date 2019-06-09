@@ -20,36 +20,26 @@ def read_reviews_from_csv():
                 headers_read = True
                 continue
             review_no.append(review_idx)
-            # print("======================================")
-            # print('Review: %s' % row[headers.index('review')])
-            # print("-------------------------------------")
             review_words_list = re.split('\\. | ', row[headers.index('review')])
-            # print(review_words_list)
-            words_no_in_review = len(review_words_list)
-            # print("-------------------------------------")
-            # print("No of wrods in review: %d" % words_no_in_review)
-            # print("======================================")
-            # if words_no_in_review < 500:
-            #     continue
             words_no_in_reviews.append(len(review_words_list))
             review_idx += 1
-
 
 def show_reviews_box_plot(data):
     # spread = data
     # center = mean(data)
-    # data_median = median(data)
-    # sub_data_Q1 = list(filter(lambda x: x < data_median, data))
-    # sub_data_Q3 = list(filter(lambda x: x > data_median, data))
-    # Q1 = median(sub_data_Q1)
-    # Q3 = median(sub_data_Q3)
-    # IQR = Q3 - Q1
-    # flier_high = max(min(data), Q1 - 1.5 * IQR)
-    # flier_low = min(max(data), Q3 + 1.5 * IQR)
-    # result_data = np.concatenate((spread, center, flier_high, flier_low))
+    data_median = median(data)
+    sub_data_Q1 = list(filter(lambda x: x < data_median, data))
+    sub_data_Q3 = list(filter(lambda x: x > data_median, data))
+    Q1 = median(sub_data_Q1)
+    Q3 = median(sub_data_Q3)
+    IQR = Q3 - Q1
+    flier_high = max(min(data), Q1 - 1.5 * IQR)
+    flier_low = min(max(data), Q3 + 1.5 * IQR)
     fig1, ax1 = plt.subplots()
     ax1.set_title('Number of wrods in revews box plot')
     ax1.boxplot(data, showfliers=False)
+    plt.hlines(y=[flier_high, mean(data), Q1, Q3, data_median, flier_low], xmin=0, xmax=1, colors='k', linestyles='dashed')
+    plt.yticks([flier_high, Q1, Q3, mean(data), data_median, flier_low])
     plt.ylabel("word count")
     plt.show()
 
@@ -101,17 +91,17 @@ def median(lst):
 
 def main():
     read_reviews_from_csv()
-    # show_reviews_length_histogram()
-    show_reviews_box_plot(words_no_in_reviews)
     counter = 0
     for words in words_no_in_reviews:
         if words > 75:
             counter += 1
     print("Max review length is: %d" % max(words_no_in_reviews))
     print("Number of reviews with less than 75 words: %d" % counter)
-    # print("Average length of review is %f" % (sum(words_no_in_reviews) / len(words_no_in_reviews)))
     print("Average length of review is %f" % mean(words_no_in_reviews))
+    print("Median of number of words in reviews is %d" % median(words_no_in_reviews))
     print("Standard deviation of review length is %f" % stddev(words_no_in_reviews))
+    show_reviews_length_histogram()
+    show_reviews_box_plot(words_no_in_reviews)
 
 
 if __name__ == '__main__':
