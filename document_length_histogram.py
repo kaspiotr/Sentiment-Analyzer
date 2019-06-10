@@ -33,10 +33,10 @@ def show_reviews_box_plot(data):
     Q1 = median(sub_data_Q1)
     Q3 = median(sub_data_Q3)
     IQR = Q3 - Q1
-    flier_high = max(min(data), Q1 - 1.5 * IQR)
-    flier_low = min(max(data), Q3 + 1.5 * IQR)
+    flier_low = max(min(data), Q1 - 1.5 * IQR)
+    flier_high = min(max(data), Q3 + 1.5 * IQR)
     fig1, ax1 = plt.subplots()
-    ax1.set_title('Number of wrods in revews box plot')
+    ax1.set_title('Number of words in reviews box plot')
     ax1.boxplot(data, showfliers=False)
     plt.hlines(y=[flier_high, mean(data), Q1, Q3, data_median, flier_low], xmin=0, xmax=1, colors='k', linestyles='dashed')
     plt.yticks([flier_high, Q1, Q3, mean(data), data_median, flier_low])
@@ -93,10 +93,10 @@ def main():
     read_reviews_from_csv()
     counter = 0
     for words in words_no_in_reviews:
-        if words > 75:
+        if words > 45:
             counter += 1
     print("Max review length is: %d" % max(words_no_in_reviews))
-    print("Number of reviews with less than 75 words: %d" % counter)
+    print("Number of reviews with more than 45 words: %d" % counter)
     print("Average length of review is %f" % mean(words_no_in_reviews))
     print("Median of number of words in reviews is %d" % median(words_no_in_reviews))
     print("Standard deviation of review length is %f" % stddev(words_no_in_reviews))

@@ -5,7 +5,7 @@ from keras import callbacks
 import numpy as np
 import time
 
-TIME_STEPS = 15
+TIME_STEPS = 45
 WORD_NUMERIC_VECTOR_SIZE = 300
 DROPOUT = 0.4
 RECURRENT_DROPOUT = 0.4
@@ -28,8 +28,8 @@ class LstmNet():
         return model
 
     def create_data_generator(self):
-        return DataGenerator('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/negative_reviews',
-                             '/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/positive_reviews')
+        return DataGenerator('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/negative_reviews_45',
+                             '/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/positive_reviews_45')
 
     def train_network(self):
         np.random.seed(7)
@@ -48,7 +48,7 @@ class LstmNet():
         score, acc = self.model.evaluate_generator(self.data_generator.get_test_generator(BATCH_SIZE),
                                                    steps=self.data_generator.get_test_samples_count() // BATCH_SIZE)
 
-        self.model.save("resources/sentiment_analyzer_model.h5")
+        self.model.save("resources/sentiment_analyzer_model_45.h5")
 
         print('Score: %f' % score)
         print('Test accuracy: %f%%' % (acc * 100))

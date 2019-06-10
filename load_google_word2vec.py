@@ -4,6 +4,7 @@ import numpy as np
 from gensim import models
 from gensim.utils import tokenize
 
+NO_OF_WORDS_TAKEN_FROM_REVIEW = 45
 _google_model = None
 GOOGLE_NEWS_WORD_LIMIT = None
 recommendations = []
@@ -46,9 +47,9 @@ def load_google_w2v_model(words_limit=GOOGLE_NEWS_WORD_LIMIT):
 
 def write_vectors_matrix_to_file(idx, vectors_matrix):
     if recommendations[idx] == 0:
-        np.save('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/negative_reviews/review%d' % idx, vectors_matrix)
+        np.save('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/negative_reviews_%d/review%d' % (NO_OF_WORDS_TAKEN_FROM_REVIEW, idx), vectors_matrix)
     else:
-        np.save('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/positive_reviews/review%d' % idx, vectors_matrix)
+        np.save('/media/kaspiotr/Multimedia HDD/Sentiment_Analyzer_project_review_matrices/positive_reviews_%d/review%d' % (NO_OF_WORDS_TAKEN_FROM_REVIEW, idx), vectors_matrix)
 
 
 def create_review_matrix(reviews_list):
@@ -59,18 +60,18 @@ def create_review_matrix(reviews_list):
         filtered_tokens = filter(lambda x: x in _google_model.vocab, tokens)
         filtered_tokens_list = list(filtered_tokens)
         filtered_tokens_len = len(filtered_tokens_list)
-        if filtered_tokens_len >= 15:
-            filtered_tokens_short = filtered_tokens_list[:15]
+        if filtered_tokens_len >= NO_OF_WORDS_TAKEN_FROM_REVIEW:
+            filtered_tokens_short = filtered_tokens_list[:NO_OF_WORDS_TAKEN_FROM_REVIEW]
         else:
             filtered_tokens_short = filtered_tokens_list
-            filtered_tokens_short += (15 - filtered_tokens_len) * ['0']
+            filtered_tokens_short += (NO_OF_WORDS_TAKEN_FROM_REVIEW - filtered_tokens_len) * ['0']
 
         vectors_list = []
         for token in filtered_tokens_short:
             vector = _google_model[token]
             vectors_list.append(vector)
 
-        vectors_matrix = np.zeros([15, 300])
+        vectors_matrix = np.zeros([NO_OF_WORDS_TAKEN_FROM_REVIEW, 300])
         for row in range(len(vectors_list)):
             vectors_matrix[row] = vectors_list[row]
         yield vectors_matrix, idx
@@ -80,13 +81,14 @@ def create_review_matrix(reviews_list):
 def main():
     read_csv()
     load_google_w2v_model()
-    counter = 0
+    # counter = 0
     for review_vectors_matrix, review_idx in create_review_matrix(reviews):
-        if counter < 10:
-            write_vectors_matrix_to_file(review_idx, review_vectors_matrix)
-        else:
-            break
-        counter += 1
+        write_vectors_matrix_to_file(review_idx, review_vectors_matrix)
+        # if counter < 10:
+        #     write_vectors_matrix_to_file(review_idx, review_vectors_matrix)
+        # else:
+        #     break
+        # counter += 1
 
 
 if __name__ == '__main__':

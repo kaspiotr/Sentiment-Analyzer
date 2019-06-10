@@ -7,17 +7,17 @@ from gensim.models import Word2Vec
 sentiment = {0: "negative", 1: "positive"}
 STOP_LIST = set('for a of the and to in'.split())
 WORD_NUMERIC_VECTOR_SIZE = 300
-
-"""
-Converts the document to its numeric representation
-:param document:
-:param model:
-:param time_steps: maximum number of words that will be taken into account during vector computation
-:return:
-"""
+NO_OF_WORDS_TAKEN_FROM_REVIEW = 45
 
 
 def document_to_batch(document, model: Word2Vec, time_steps):
+    """
+    Converts the document to its numeric representation
+    :param document:
+    :param model:
+    :param time_steps: maximum number of words that will be taken into account during vector computation
+    :return:
+    """
     words_vectors_batch = []
     counter = 0
     for word in document:
@@ -34,9 +34,9 @@ def document_to_batch(document, model: Word2Vec, time_steps):
 
 
 def check_review():
-    print("Wait for the google Word2Vec model to be loaded...")
+    print("Wait for the Google Word2Vec model to be loaded...")
     w2v_model = load_google_w2v_model()
-    net_model = keras.models.load_model("resources/sentiment_analyzer_model.h5")
+    net_model = keras.models.load_model("resources/sentiment_analyzer_model_45.h5")
     print("Word2Vec model loaded")
 
     while True:
@@ -47,7 +47,7 @@ def check_review():
 
         tokens_line = list(utils.tokenize(line, deacc=True, lower=True))
         document_review = list(filter(lambda x: x not in STOP_LIST, tokens_line))
-        line_numeric = np.array([document_to_batch(document_review, w2v_model, 15)])
+        line_numeric = np.array([document_to_batch(document_review, w2v_model, NO_OF_WORDS_TAKEN_FROM_REVIEW)])
 
         print('I think this review is: ' + evaluate(net_model, line_numeric))
     print('Good bye')
